@@ -3,72 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Sanctuary | Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Dashboard | Our Sanctuary</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="dashboard-wrapper">
+    <div class="dashboard-container">
         <header>
-            <div class="profile-section">
-                <div class="avatar">❤️</div>
-                <div class="user-meta">
-                    <h2 id="welcomeUser">Welcome</h2>
-                    <p id="partnerKeyDisplay">Key: ----</p>
-                </div>
-            </div>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+            <h1 id="greeting">Welcome, Love</h1>
+            <button id="logoutBtn">Logout</button>
         </header>
 
-        <main>
-            <h1 class="page-title">Our Sanctuary</h1>
-            
-            <div class="feature-stack">
-                
-                <div class="feature-card" onclick="location.href='../capsule/index.html'">
-                    <div class="icon">⌛</div>
-                    <div class="info">
-                        <h3>Memory Capsule</h3>
-                        <p>Seal photos and letters for the future.</p>
-                    </div>
-                </div>
-
-                <div class="feature-card" onclick="location.href='../quiz/quiz.html'">
-                    <div class="icon">🎯</div>
-                    <div class="info">
-                        <h3>Love Quest</h3>
-                        <p>Take quizzes and check compatibility.</p>
-                    </div>
-                </div>
-
+        <div class="card-grid">
+            <div class="card" id="capsuleCard">
+                <div class="icon">⌛</div>
+                <h2>Memory Capsule</h2>
+                <p>Seal your precious moments for the future.</p>
+                <div class="btn">Open Vault</div>
             </div>
-        </main>
+
+            <div class="card" id="moodCard">
+                <div class="icon">💓</div>
+                <h2>Mood Sync</h2>
+                <p>Share your feelings and nudge your partner.</p>
+                <div class="btn">Check Mood</div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script>
-        const user = JSON.parse(sessionStorage.getItem('activeUser'));
-        if (!user) {
-            window.location.href = "../login/login.html";
-        } else {
-            document.getElementById('welcomeUser').textContent = `Hi, ${user.username}!`;
-            document.getElementById('partnerKeyDisplay').textContent = `Key: ${user.partnerKey}`;
-        }
-
-        // Entrance animation for both cards
-        gsap.from(".feature-card", { 
-            opacity: 0, 
-            scale: 0.8, 
-            duration: 0.6, 
-            stagger: 0.3, 
-            ease: "back.out(1.7)" 
-        });
-
-        function logout() {
-            sessionStorage.clear();
-            window.location.href = "../login/login.html";
-        }
-    </script>
+    <script src="dashboard.js"></script>
 </body>
 </html>

@@ -48,8 +48,29 @@
           <video id="remoteVideo" autoplay playsinline></video>
         </article>
       </section>
+
+      <section class="panel movie-panel">
+        <h2>Virtual Movie Date</h2>
+        <p class="subtitle">Paste a direct `.mp4` URL or a YouTube link. Controls sync between both tabs in the same room.</p>
+
+        <div class="movie-controls">
+          <input id="movieUrl" type="text" placeholder="Paste direct video URL (example: https://.../movie.mp4)" />
+          <button id="loadMovieBtn" class="btn">Load Movie</button>
+          <button id="moviePlayBtn" class="btn">Play</button>
+          <button id="moviePauseBtn" class="btn">Pause</button>
+          <button id="movieBackBtn" class="btn">-10s</button>
+          <button id="movieForwardBtn" class="btn">+10s</button>
+          <button id="movieSyncBtn" class="btn">Sync Now</button>
+        </div>
+
+        <div id="movieStatus" class="status">Movie player ready.</div>
+        <video id="moviePlayer" controls playsinline></video>
+        <div id="youtubePlayerWrap" class="youtube-wrap">
+          <div id="youtubePlayer"></div>
+        </div>
+      </section>
     </main>
 
-    <script type="module" src="app.js?v=20260213a"></script>
+    <script type="module" src="app.js?v=20260213b"></script>
   </body>
 </html>
