@@ -1,0 +1,71 @@
+:root {
+    --primary: #d63384;
+    --bg: #fdf2f8;
+    --card-bg: #ffffff;
+    --text: #333;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+header { text-align: center; margin-bottom: 2rem; }
+
+/* Form Styling */
+.capsule-form {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+input, textarea {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+button:hover { transform: translateY(-2px); opacity: 0.9; }
+
+/* Dashboard Styling */
+.capsule-card {
+    background: white;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 10px;
+    border-left: 5px solid var(--primary);
+}
+
+.countdown {
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.unlocked { border-left-color: #28a745; }
+.hidden { display: none; }
+.error { color: #dc3545; font-size: 0.9rem; }
+.success { color: #28a745; font-size: 0.9rem; }
