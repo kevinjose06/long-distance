@@ -22,6 +22,24 @@ document.getElementById('moodCard').addEventListener('click', () => {
     window.location.href = "../mood/index.html";
 });
 
+// Quiz navigation
+const quizCard = document.getElementById('quizCard');
+if (quizCard) {
+    quizCard.addEventListener('click', () => {
+        window.location.href = "../quiz/quiz.html";
+    });
+    quizCard.addEventListener('keydown', (e) => { if (e.key === 'Enter') window.location.href = "../quiz/quiz.html"; });
+}
+
+// VDO navigation
+const vdoCard = document.getElementById('vdoCard');
+if (vdoCard) {
+    vdoCard.addEventListener('click', () => {
+        window.location.href = "../vdo/index.html";
+    });
+    vdoCard.addEventListener('keydown', (e) => { if (e.key === 'Enter') window.location.href = "../vdo/index.html"; });
+}
+
 // 4. Logout
 document.getElementById('logoutBtn').addEventListener('click', () => {
     sessionStorage.clear();
