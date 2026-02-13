@@ -3,36 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Our Sanctuary</title>
+    <title>Sanctuary Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="dashboard-container">
+    <div class="dashboard-wrapper">
         <header>
-            <h1 id="greeting">Welcome, Love</h1>
-            <button id="logoutBtn">Logout</button>
+            <div class="profile-section">
+                <div class="avatar">❤️</div>
+                <div>
+                    <h2 id="welcomeUser">Welcome, Love</h2>
+                    <p id="partnerKeyDisplay">Key: ----</p>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
         </header>
 
-        <div class="card-grid">
-            <div class="card" id="capsuleCard">
-                <div class="icon">⌛</div>
-                <h2>Memory Capsule</h2>
-                <p>Seal your precious moments for the future.</p>
-                <div class="btn">Open Vault</div>
-            </div>
+        <main>
+            <h1 class="page-title">Our Shared Activities</h1>
+            
+            <div class="activity-grid">
+                <div class="card" id="capsuleCard" onclick="navigateTo('../capsule/index.html')">
+                    <div class="card-icon">⌛</div>
+                    <div class="card-content">
+                        <h3>Memory Capsule</h3>
+                        <p>Seal photos and letters for the future.</p>
+                    </div>
+                </div>
 
-            <div class="card" id="moodCard">
-                <div class="icon">💓</div>
-                <h2>Mood Sync</h2>
-                <p>Share your feelings and nudge your partner.</p>
-                <div class="btn">Check Mood</div>
+                <div class="card" id="quizCard" onclick="navigateTo('../quiz/quiz.html')">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-content">
+                        <h3>Love Quest</h3>
+                        <p>Test your compatibility with partner quizzes.</p>
+                    </div>
+                </div>
+
+                <div class="card locked">
+                    <div class="card-icon">🔒</div>
+                    <div class="card-content">
+                        <h3>Mood Sync</h3>
+                        <p>Coming soon to your sanctuary.</p>
+                    </div>
+                </div>
             </div>
-        </div>
+        </main>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="dashboard.js"></script>
+    <script>
+        // Check Session
+        const user = JSON.parse(sessionStorage.getItem('activeUser'));
+        if (!user) {
+            window.location.href = "../login/login.html";
+        } else {
+            document.getElementById('welcomeUser').textContent = `Hi, ${user.username}!`;
+            document.getElementById('partnerKeyDisplay').textContent = `Partner Key: ${user.partnerKey}`;
+        }
+
+        // GSAP Animations
+        gsap.from(".card", {
+            duration: 0.8,
+            y: 30,
+            opacity: 0,
+            stagger: 0.2,
+            ease: "power2.out"
+        });
+
+        function navigateTo(path) {
+            gsap.to(".dashboard-wrapper", { opacity: 0, scale: 0.9, duration: 0.4, onComplete: () => {
+                window.location.href = path;
+            }});
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = "../login/login.html";
+        }
+    </script>
 </body>
 </html>

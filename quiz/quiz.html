@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Love Quest | Quiz</title>
+    <link rel="stylesheet" href="quiz.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="quiz-wrapper">
+        <button class="back-btn" onclick="location.href='../dashboard/index.html'">← Back</button>
+
+        <div id="setupView" class="glass-card">
+            <h1>Love Quest</h1>
+            <p>Would you like to set the questions or answer them?</p>
+            <div class="choice-btns">
+                <button onclick="switchView('create')">Set Questions</button>
+                <button onclick="switchView('solve')">Take the Quiz</button>
+            </div>
+        </div>
+
+        <div id="createView" class="glass-card" style="display:none;">
+            <h2>Create a Question</h2>
+            <div class="input-group">
+                <input type="text" id="qText" placeholder="e.g., What is my favorite food?">
+                <input type="text" id="qAns" placeholder="The correct answer">
+            </div>
+            <button onclick="saveQuestion()">Add to Quest</button>
+            <p id="qStatus"></p>
+        </div>
+
+        <div id="solveView" class="glass-card" style="display:none;">
+            <div id="questionContainer">
+                <h2 id="displayQ">Loading...</h2>
+                <input type="text" id="solverAns" placeholder="Your answer...">
+                <button onclick="nextQuestion()">Submit Answer</button>
+            </div>
+            <div id="resultContainer" style="display:none;">
+                <h2 id="scoreText">Compatibility: 0%</h2>
+                <div class="progress-bar"><div id="progressFill"></div></div>
+                <p id="compatibilityMsg"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="quiz.js"></script>
+</body>
+</html>
