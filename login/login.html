@@ -3,28 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Distance Doesn't Delete Love</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Distance Doesn’t Delete Love | Entrance</title>
+    <link rel="stylesheet" href="login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="auth-container">
-        <div class="auth-box">
+    <div class="glass-container">
+        <div class="auth-card">
+            <div class="logo">❤️</div>
             <h1 id="formTitle">Create Sanctuary</h1>
-            <p id="formSubtitle">Enter your details to begin your journey.</p>
-            
-            <div class="input-group">
-                <input type="text" id="username" placeholder="Your Username" required>
-                <input type="password" id="password" placeholder="Secret Password" required>
-                <input type="text" id="partnerKey" placeholder="Shared Partner Key (e.g. LOVE2026)" required>
+            <p id="formSubtitle">A private space for you and your partner.</p>
+
+            <div class="input-stack">
+                <div class="input-field">
+                    <input type="text" id="username" placeholder=" " required>
+                    <label>Username</label>
+                </div>
+                <div class="input-field">
+                    <input type="password" id="password" placeholder=" " required>
+                    <label>Password</label>
+                </div>
+                <div class="input-field" id="keyWrapper">
+                    <input type="text" id="partnerKey" placeholder=" " required>
+                    <label>Shared Partner Key</label>
+                </div>
             </div>
 
-            <button id="authBtn">Enter the Vault</button>
+            <button id="authBtn">
+                <span class="btn-text">Enter the Vault</span>
+                <div class="btn-shimmer"></div>
+            </button>
+
             <p id="toggleMsg">Already have a sanctuary? <span>Sign In</span></p>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="auth.js"></script>
+    <script src="login.js"></script>
 </body>
 </html>

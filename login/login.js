@@ -1,73 +1,72 @@
-let isLoginMode = false;
-const authBtn = document.getElementById('authBtn');
-const toggleMsg = document.getElementById('toggleMsg');
-const partnerKeyInput = document.getElementById('partnerKey');
+:root {
+    --primary: #ff4d6d;
+    --bg-gradient: linear-gradient(135deg, #fff5f7 0%, #ffe3e8 100%);
+}
 
-// 1. Initial Animation
-gsap.from(".auth-box", { opacity: 0, y: 30, duration: 1, ease: "power2.out" });
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-gradient);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
 
-// 2. Toggle between Sign Up and Sign In
-toggleMsg.addEventListener('click', () => {
-    isLoginMode = !isLoginMode;
-    
-    // Animate the height change
-    gsap.to(".auth-box", { duration: 0.3, height: "auto" });
+.auth-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0 20px 60px rgba(255, 77, 109, 0.2);
+    width: 320px;
+    text-align: center;
+    border: 1px solid white;
+}
 
-    if (isLoginMode) {
-        document.getElementById('formTitle').textContent = "Welcome Back";
-        document.getElementById('formSubtitle').textContent = "Sign in to see your shared memories.";
-        partnerKeyInput.style.display = "none";
-        authBtn.textContent = "Sign In";
-        toggleMsg.innerHTML = "Need an account? <span>Sign Up</span>";
-    } else {
-        document.getElementById('formTitle').textContent = "Create Sanctuary";
-        document.getElementById('formSubtitle').textContent = "Enter your details to begin your journey.";
-        partnerKeyInput.style.display = "block";
-        authBtn.textContent = "Enter the Vault";
-        toggleMsg.innerHTML = "Already have a sanctuary? <span>Sign In</span>";
-    }
-});
+.logo { font-size: 3rem; margin-bottom: 10px; }
+h1 { font-family: 'Dancing Script', cursive; color: var(--primary); margin: 0; }
 
-// 3. Handle Authentication
-authBtn.addEventListener('click', () => {
-    const user = document.getElementById('username').value.trim();
-    const pass = document.getElementById('password').value.trim();
-    const key = partnerKeyInput.value.trim();
+.input-stack { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
 
-    if (!user || !pass) return alert("Username and Password are required!");
+.input-field { position: relative; border-bottom: 2px solid #ddd; }
+.input-field input {
+    width: 100%;
+    padding: 10px 0;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+}
 
-    if (isLoginMode) {
-        // --- SIGN IN LOGIC ---
-        const savedUser = JSON.parse(localStorage.getItem(`user_${user}`));
-        
-        if (savedUser && savedUser.password === pass) {
-            // Save temporary session
-            sessionStorage.setItem('activeUser', JSON.stringify(savedUser));
-            
-            gsap.to(".auth-box", { opacity: 0, scale: 0.9, duration: 0.5, onComplete: () => {
-                window.location.href = "../dashboard/index.html"; 
-            }});
-        } else {
-            alert("Invalid username or password.");
-        }
-    } else {
-        // --- SIGN UP LOGIC ---
-        if (!key) return alert("A Partner Key is required to link with your partner!");
+.input-field label {
+    position: absolute;
+    left: 0;
+    top: 10px;
+    color: #999;
+    transition: 0.3s;
+    pointer-events: none;
+}
 
-        const userData = {
-            username: user,
-            password: pass,
-            partnerKey: key
-        };
+.input-field input:focus ~ label,
+.input-field input:not(:placeholder-shown) ~ label {
+    top: -15px;
+    font-size: 0.8rem;
+    color: var(--primary);
+}
 
-        // Save to permanent local storage (The User Database)
-        localStorage.setItem(`user_${user}`, JSON.stringify(userData));
-        
-        // Save to session storage (The Login Pass)
-        sessionStorage.setItem('activeUser', JSON.stringify(userData));
+button {
+    margin-top: 30px;
+    width: 100%;
+    padding: 15px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
+}
 
-        gsap.to(".auth-box", { opacity: 0, y: -20, duration: 0.5, onComplete: () => {
-            window.location.href = "../dashboard/index.html";
-        }});
-    }
-});
+#toggleMsg { margin-top: 20px; font-size: 0.8rem; cursor: pointer; }
+#toggleMsg span { color: var(--primary); font-weight: bold; }
