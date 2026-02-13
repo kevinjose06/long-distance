@@ -30,8 +30,7 @@ authBtn.addEventListener('click', () => {
         const savedUser = JSON.parse(localStorage.getItem(`user_${user}`));
         if (savedUser && savedUser.password === pass) {
             sessionStorage.setItem('activeUser', JSON.stringify(savedUser));
-            // GO UP ONE LEVEL to your distance app folder
-            window.location.href = "../index.html"; 
+            window.location.href = "../dashboard/index.html"; 
         } else {
             alert("Wrong credentials!");
         }
@@ -40,7 +39,6 @@ authBtn.addEventListener('click', () => {
         const userData = { username: user, password: pass, partnerKey: key };
         localStorage.setItem(`user_${user}`, JSON.stringify(userData));
         sessionStorage.setItem('activeUser', JSON.stringify(userData));
-        // GO UP ONE LEVEL to your distance app folder
-        window.location.href = "../index.html";
+        window.location.href = "../dashboard/index.html";
     }
-});
+}); // <--- THIS WAS MISSING
