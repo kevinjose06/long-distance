@@ -1,76 +1,52 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Code Connect Video Call</title>
-    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <main class="app">
-      <header class="hero">
-        <p class="eyebrow">Video Call</p>
-        <h1>Join With A Room Code</h1>
-        <p class="subtitle">Both people use the same code to connect in one call room.</p>
-      </header>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Cinema | Video Sanctuary</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-      <section class="panel controls">
-        <label>
-          Room Code
-          <input id="roomCode" type="text" maxlength="24" placeholder="e.g. LOVECALL26" />
-        </label>
+    <div class="video-container">
+        <header class="video-header">
+            <button class="back-btn" onclick="location.href='../dashboard/index.html'">← Back</button>
+            <h1 class="feature-title">Our Cinema</h1>
+        </header>
 
-        <div class="button-row">
-          <button id="startBtn" class="btn">Start Camera</button>
-          <button id="createBtn" class="btn">Create Room</button>
-          <button id="joinBtn" class="btn">Join Room</button>
-          <button id="hangupBtn" class="btn danger">Hang Up</button>
+        <div class="video-panel">
+            <div class="input-section">
+                <input type="text" id="videoUrl" placeholder="Paste YouTube link here...">
+                <button class="action-btn" onclick="loadVideo()">Play Movie</button>
+            </div>
+
+            <div id="playerWrapper" class="player-wrapper">
+                <div class="placeholder-msg">
+                    <p>Ready for a movie date?</p>
+                    <span>Paste a link above to start watching together</span>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <div id="status" class="status">Ready.</div>
-      </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        function loadVideo() {
+            const url = document.getElementById('videoUrl').value;
+            const wrapper = document.getElementById('playerWrapper');
+            
+            // Simple logic to extract YouTube ID
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
 
-      <section class="video-grid">
-        <article class="panel video-card">
-          <h2>Your Video</h2>
-          <video id="localVideo" autoplay playsinline muted></video>
-        </article>
-
-        <article class="panel video-card">
-          <h2>Partner Video</h2>
-          <video id="remoteVideo" autoplay playsinline></video>
-        </article>
-      </section>
-
-      <section class="panel movie-panel">
-        <h2>Virtual Movie Date</h2>
-        <p class="subtitle">Paste a direct `.mp4` URL or a YouTube link. Controls sync between both tabs in the same room.</p>
-
-        <div class="movie-controls">
-          <input id="movieUrl" type="text" placeholder="Paste direct video URL (example: https://.../movie.mp4)" />
-          <button id="loadMovieBtn" class="btn">Load Movie</button>
-          <button id="moviePlayBtn" class="btn">Play</button>
-          <button id="moviePauseBtn" class="btn">Pause</button>
-          <button id="movieBackBtn" class="btn">-10s</button>
-          <button id="movieForwardBtn" class="btn">+10s</button>
-          <button id="movieSyncBtn" class="btn">Sync Now</button>
-        </div>
-
-        <div id="movieStatus" class="status">Movie player ready.</div>
-        <video id="moviePlayer" controls playsinline></video>
-        <div id="youtubePlayerWrap" class="youtube-wrap">
-          <div id="youtubePlayer"></div>
-        </div>
-      </section>
-    </main>
-
-    <script type="module" src="app.js?v=20260213b"></script>
-  </body>
+            if (match && match[2].length == 11) {
+                wrapper.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${match[2]}" frameborder="0" allowfullscreen></iframe>`;
+                gsap.from("iframe", { opacity: 0, scale: 0.9, duration: 0.5 });
+            } else {
+                alert("Please enter a valid YouTube link!");
+            }
+        }
+    </script>
+</body>
 </html>
