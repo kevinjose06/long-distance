@@ -1,71 +1,22 @@
-:root {
-    --primary: #d63384;
-    --bg: #fdf2f8;
-    --card-bg: #ffffff;
-    --text: #333;
+:root { --primary: #d63384; --bg: #fdf2f8; }
+body { font-family: sans-serif; background: var(--bg); padding: 20px; color: #333; }
+.container { max-width: 600px; margin: 0 auto; }
+
+.capsule-form { 
+    background: white; padding: 20px; border-radius: 12px; 
+    display: flex; flex-direction: column; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg);
-    color: var(--text);
-    margin: 0;
-    padding: 20px;
+.file-group { display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem; }
+input, textarea { padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+
+button { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+.capsule-card { background: white; padding: 20px; margin-top: 20px; border-radius: 12px; border-left: 6px solid var(--primary); }
+.capsule-card img, .capsule-card video { 
+    width: 100%; border-radius: 8px; margin-top: 10px; max-height: 300px; object-fit: cover; 
 }
 
-.container {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-header { text-align: center; margin-bottom: 2rem; }
-
-/* Form Styling */
-.capsule-form {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-input, textarea {
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-button {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: transform 0.2s;
-}
-
-button:hover { transform: translateY(-2px); opacity: 0.9; }
-
-/* Dashboard Styling */
-.capsule-card {
-    background: white;
-    padding: 15px;
-    margin-top: 15px;
-    border-radius: 10px;
-    border-left: 5px solid var(--primary);
-}
-
-.countdown {
-    font-weight: bold;
-    color: var(--primary);
-}
-
-.unlocked { border-left-color: #28a745; }
-.hidden { display: none; }
-.error { color: #dc3545; font-size: 0.9rem; }
-.success { color: #28a745; font-size: 0.9rem; }
+.locked-hint { font-style: italic; color: #777; }
+.success { color: green; }
+.error { color: red; }
