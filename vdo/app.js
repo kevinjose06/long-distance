@@ -34,6 +34,7 @@ const state = {
   localStream: null,
   remoteStream: null,
   joined: false,
+  pendingCandidates: [],
   suppressMovieBroadcast: false,
   movieMode: null,
   currentMediaUrl: "",
@@ -240,8 +241,17 @@ function openChannel(roomId) {
 
 async function onOffer(offer) {
   try {
-    if (!state.pc.currentRemoteDescription) {
+    if (!state.pc.remoteDescription || !state.pc.remoteDescription.type) {
       await state.pc.setRemoteDescription(new RTCSessionDescription(offer));
+      // flush any queued remote ICE candidates that arrived early
+      while (state.pendingCandidates.length) {
+        const c = state.pendingCandidates.shift();
+        try {
+          await state.pc.addIceCandidate(new RTCIceCandidate(c));
+        } catch (e) {
+          // ignore individual candidate errors
+        }
+      }
     }
 
     const answer = await state.pc.createAnswer();
@@ -255,8 +265,17 @@ async function onOffer(offer) {
 
 async function onAnswer(answer) {
   try {
-    if (!state.pc.currentRemoteDescription) {
+    if (!state.pc.remoteDescription || !state.pc.remoteDescription.type) {
       await state.pc.setRemoteDescription(new RTCSessionDescription(answer));
+      // flush any queued remote ICE candidates that arrived early
+      while (state.pendingCandidates.length) {
+        const c = state.pendingCandidates.shift();
+        try {
+          await state.pc.addIceCandidate(new RTCIceCandidate(c));
+        } catch (e) {
+          // ignore individual candidate errors
+        }
+      }
       setStatus("Answer received. Finalizing connection...");
     }
   } catch (error) {
@@ -267,7 +286,11 @@ async function onAnswer(answer) {
 async function onIce(candidateData) {
   try {
     if (!state.pc || !candidateData) return;
-    if (!state.pc.remoteDescription) return;
+    // If remote description is not set yet, queue the candidate for later
+    if (!state.pc.remoteDescription || !state.pc.remoteDescription.type) {
+      state.pendingCandidates.push(candidateData);
+      return;
+    }
     await state.pc.addIceCandidate(new RTCIceCandidate(candidateData));
   } catch {
     // ignore occasional duplicate candidate errors
@@ -313,6 +336,9 @@ async function cleanupSession(resetButtons) {
     state.remoteStream.getTracks().forEach((track) => track.stop());
     state.remoteStream = null;
   }
+
+  // clear any queued candidates
+  state.pendingCandidates = [];
 
   els.remoteVideo.srcObject = null;
 
