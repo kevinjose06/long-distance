@@ -1,181 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Cinema | Video Sanctuary</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Connect Video Call</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="hero">
+        <p class="eyebrow">Video Call</p>
+        <h1>Join With A Room Code</h1>
+        <p class="subtitle">Both people use the same code to connect in one call room.</p>
+      </header>
 
-    <div class="video-container">
-        <header class="video-header">
-            <button class="back-btn" onclick="location.href='../dashboard/index.html'">← Back</button>
-            <h1 class="feature-title">Our Cinema</h1>
-        </header>
+      <section class="panel controls">
+        <label>
+          Room Code
+          <input id="roomCode" type="text" maxlength="24" placeholder="e.g. LOVECALL26" />
+        </label>
 
-        <div class="video-panel">
-            <div class="input-section">
-                <input type="text" id="videoUrl" placeholder="Paste YouTube link here...">
-                <button class="action-btn" id="loadBtn">Play Movie</button>
-                <button class="action-btn" id="pauseBtn">Pause (Both)</button>
-                <button class="action-btn" id="resumeBtn">Resume (Both)</button>
-            </div>
-
-            <div id="playerWrapper" class="player-wrapper">
-                <div class="placeholder-msg">
-                    <p>Ready for a movie date?</p>
-                    <span>Paste a link above to start watching together</span>
-                </div>
-            </div>
+        <div class="button-row">
+          <button id="startBtn" class="btn">Start Camera</button>
+          <button id="createBtn" class="btn">Create Room</button>
+          <button id="joinBtn" class="btn">Join Room</button>
+          <button id="hangupBtn" class="btn danger">Hang Up</button>
         </div>
-    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script>
-        (function(){
-            const bc = new BroadcastChannel('vdo-sync-channel');
-            const videoUrlEl = document.getElementById('videoUrl');
-            const wrapper = document.getElementById('playerWrapper');
-            const loadBtn = document.getElementById('loadBtn');
-            const pauseBtn = document.getElementById('pauseBtn');
-            const resumeBtn = document.getElementById('resumeBtn');
+        <div id="status" class="status">Ready.</div>
+      </section>
 
-            let player = {
-                mode: null,
-                yt: null,
-                html5: null,
-            };
+      <section class="video-grid">
+        <article class="panel video-card">
+          <h2>Your Video</h2>
+          <video id="localVideo" autoplay playsinline muted></video>
+        </article>
 
-            loadBtn.addEventListener('click', () => loadVideo());
-            pauseBtn.addEventListener('click', () => broadcastControl('pause'));
-            resumeBtn.addEventListener('click', () => broadcastControl('play'));
+        <article class="panel video-card">
+          <h2>Partner Video</h2>
+          <video id="remoteVideo" autoplay playsinline></video>
+        </article>
+      </section>
 
-            bc.onmessage = (ev) => {
-                const msg = ev.data;
-                if (!msg || !msg.type || msg.type !== 'control') return;
-                applyRemoteControl(msg.action, msg.time);
-            };
+      <section class="panel movie-panel">
+        <h2>Virtual Movie Date</h2>
+        <p class="subtitle">Paste a direct `.mp4` URL or a YouTube link. Controls sync between both tabs in the same room.</p>
 
-            function broadcastControl(action) {
-                const time = getCurrentTime();
-                applyLocalControl(action, time);
-                bc.postMessage({ type: 'control', action, time });
-            }
+        <div class="movie-controls">
+          <input id="movieUrl" type="text" placeholder="Paste direct video URL (example: https://.../movie.mp4)" />
+          <button id="loadMovieBtn" class="btn">Load Movie</button>
+          <button id="moviePlayBtn" class="btn">Play</button>
+          <button id="moviePauseBtn" class="btn">Pause</button>
+          <button id="movieBackBtn" class="btn">-10s</button>
+          <button id="movieForwardBtn" class="btn">+10s</button>
+          <button id="movieSyncBtn" class="btn">Sync Now</button>
+        </div>
 
-            function getCurrentTime() {
-                if (player.mode === 'youtube' && player.yt && typeof player.yt.getCurrentTime === 'function') {
-                    return Number(player.yt.getCurrentTime() || 0);
-                }
-                if (player.mode === 'html5' && player.html5) return player.html5.currentTime || 0;
-                return 0;
-            }
+        <div id="movieStatus" class="status">Movie player ready.</div>
+        <video id="moviePlayer" controls playsinline></video>
+        <div id="youtubePlayerWrap" class="youtube-wrap">
+          <div id="youtubePlayer"></div>
+        </div>
+      </section>
+    </main>
 
-            function applyLocalControl(action, time) {
-                if (player.mode === 'youtube' && player.yt) {
-                    try {
-                        if (typeof time === 'number') player.yt.seekTo(time, true);
-                        if (action === 'play') player.yt.playVideo();
-                        if (action === 'pause') player.yt.pauseVideo();
-                    } catch {}
-                    return;
-                }
-
-                if (player.mode === 'html5' && player.html5) {
-                    try {
-                        if (typeof time === 'number') player.html5.currentTime = time;
-                        if (action === 'play') player.html5.play();
-                        if (action === 'pause') player.html5.pause();
-                    } catch {}
-                }
-            }
-
-            function applyRemoteControl(action, time) {
-                applyLocalControl(action, time);
-            }
-
-            function loadVideo() {
-                const url = videoUrlEl.value.trim();
-                if (!url) return alert('Paste a video URL first');
-
-                const ytId = extractYouTubeId(url);
-                if (ytId) {
-                    loadYouTube(ytId);
-                    gsap.from('#youtubePlayer', { opacity: 0, scale: 0.95, duration: 0.4 });
-                    return;
-                }
-
-                loadHtml5Video(url);
-                gsap.from('#html5player', { opacity: 0, scale: 0.95, duration: 0.4 });
-            }
-
-            function loadHtml5Video(url) {
-                player.mode = 'html5';
-                wrapper.innerHTML = '';
-                const video = document.createElement('video');
-                video.id = 'html5player';
-                video.src = url;
-                video.width = '100%';
-                video.height = '100%';
-                video.controls = true;
-                wrapper.appendChild(video);
-                player.html5 = video;
-
-                video.addEventListener('play', () => { bc.postMessage({ type: 'control', action: 'play', time: video.currentTime }); });
-                video.addEventListener('pause', () => { bc.postMessage({ type: 'control', action: 'pause', time: video.currentTime }); });
-            }
-
-            function loadYouTube(videoId) {
-                player.mode = 'youtube';
-                wrapper.innerHTML = '<div id="youtubePlayer"></div>';
-                ensureYouTubeApi().then(() => {
-                    if (player.yt) {
-                        player.yt.loadVideoById(videoId);
-                        return;
-                    }
-                    player.yt = new YT.Player('youtubePlayer', {
-                        videoId,
-                        playerVars: { playsinline: 1, rel: 0, enablejsapi: 1 },
-                        events: {
-                            onReady: (e) => {},
-                            onStateChange: (e) => {
-                                const st = e.data;
-                                if (st === YT.PlayerState.PLAYING) {
-                                    bc.postMessage({ type: 'control', action: 'play', time: player.yt.getCurrentTime() });
-                                } else if (st === YT.PlayerState.PAUSED) {
-                                    bc.postMessage({ type: 'control', action: 'pause', time: player.yt.getCurrentTime() });
-                                }
-                            }
-                        }
-                    });
-                });
-            }
-
-            function ensureYouTubeApi() {
-                return new Promise((resolve) => {
-                    if (window.YT && window.YT.Player) return resolve();
-                    const prev = window.onYouTubeIframeAPIReady;
-                    window.onYouTubeIframeAPIReady = function() { if (typeof prev === 'function') prev(); resolve(); };
-                    const s = document.createElement('script');
-                    s.src = 'https://www.youtube.com/iframe_api';
-                    s.async = true;
-                    document.head.appendChild(s);
-                });
-            }
-
-            function extractYouTubeId(url) {
-                try {
-                    const u = new URL(url);
-                    if (u.hostname.includes('youtu.be')) return u.pathname.replace('/', '').trim();
-                    if (u.searchParams.get('v')) return u.searchParams.get('v');
-                    const parts = u.pathname.split('/').filter(Boolean);
-                    const idx = parts.indexOf('embed');
-                    if (idx >= 0 && parts[idx+1]) return parts[idx+1];
-                } catch {}
-                return '';
-            }
-        })();
-    </script>
-</body>
+    <script type="module" src="app.js?v=20260213b"></script>
+  </body>
 </html>
