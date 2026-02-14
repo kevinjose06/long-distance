@@ -85,3 +85,5 @@ The deployed version is hosted on Vercel.
 ![image](love.png)
 ![image](call1.png)
 
+# Deployemnt
+https://aswani010906.github.io/long-distance/
