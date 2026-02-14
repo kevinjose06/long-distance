@@ -168,6 +168,12 @@ function updateCardContent(cap, cardElement) {
                     cardElement.appendChild(audio);
                 }
             }
+            // Purge previously released notes/media from older/unlocked capsules
+            try {
+                purgePreviousReleases(cap.id);
+            } catch (e) {
+                console.warn('Could not purge previous releases', e);
+            }
         }
     } else {
         const d = Math.floor(diff / 86400000);
@@ -176,4 +182,29 @@ function updateCardContent(cap, cardElement) {
         const s = Math.floor((diff % 60000) / 1000);
         cardElement.innerHTML = `<h3>${cap.title} 🔒</h3><p class="timer">Opens in: ${d}d ${h}h ${m}m ${s}s</p>`;
     }
+}
+
+// Remove message/image/media from other capsules that are already unlocked
+function purgePreviousReleases(currentId) {
+    if (!db) return;
+    const now = Date.now();
+    const tx = db.transaction('capsules', 'readwrite');
+    const store = tx.objectStore('capsules');
+    const req = store.getAll();
+    req.onsuccess = () => {
+        const items = req.result || [];
+        items.forEach(item => {
+            if (!item || item.id === currentId) return;
+            if ((item.unlockAt || 0) <= now) {
+                // If already purged, skip
+                const needsPurge = (item.message && item.message.length) || item.image || item.media;
+                if (needsPurge) {
+                    item.message = '';
+                    item.image = null;
+                    item.media = null;
+                    store.put(item);
+                }
+            }
+        });
+    };
 }
