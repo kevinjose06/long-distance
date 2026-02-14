@@ -28,6 +28,10 @@ window.addEventListener('load', () => {
     }
 });
 
+function normalizePartnerKey(value) {
+    return (value || '').toString().trim().toUpperCase();
+}
+
 // --- 3. FILE FEEDBACK ---
 function setupFilePreview(inputId, labelId) {
     const input = document.getElementById(inputId);
@@ -65,12 +69,20 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     const unlockAt = new Date(unlockDate).getTime();
     if (Number.isNaN(unlockAt)) return alert("Please choose a valid unlock date.");
 
+    // determine active user's partner key so capsules are shared
+    const rawActive = sessionStorage.getItem('activeUser');
+    if (!rawActive) return alert('No active user session. Please sign in.');
+    let activeUser;
+    try { activeUser = JSON.parse(rawActive); } catch { return alert('Invalid session.'); }
+    const partnerKey = normalizePartnerKey(activeUser.partnerKey || '');
+
     const capsule = {
         title, message,
         unlockAt,
         image: imageFile || null,
         media: mediaFile || null,
-        created: Date.now()
+        created: Date.now(),
+        partnerKey
     };
 
     const tx = db.transaction("capsules", "readwrite");
@@ -108,9 +120,18 @@ function renderVault() {
     const getRequest = store.getAll();
 
     getRequest.onsuccess = () => {
-        const capsules = getRequest.result;
+        let capsules = getRequest.result || [];
+        // show only capsules that belong to this partner key
+        const rawActive = sessionStorage.getItem('activeUser');
+        const activePartnerKey = rawActive ? normalizePartnerKey(JSON.parse(rawActive).partnerKey || '') : '';
+        if (activePartnerKey) {
+            capsules = capsules.filter(c => normalizePartnerKey(c.partnerKey || '') === activePartnerKey);
+        } else {
+            capsules = [];
+        }
+
         capsules.sort((a, b) => b.created - a.created);
-        
+
         if (container.children.length !== capsules.length) {
             container.innerHTML = '';
             capsules.forEach((cap, i) => {
@@ -168,9 +189,9 @@ function updateCardContent(cap, cardElement) {
                     cardElement.appendChild(audio);
                 }
             }
-            // Purge previously released notes/media from older/unlocked capsules
+            // Purge previously released notes/media from older/unlocked capsules for the same partner key
             try {
-                purgePreviousReleases(cap.id);
+                purgePreviousReleases(cap.id, cap.partnerKey);
             } catch (e) {
                 console.warn('Could not purge previous releases', e);
             }
@@ -192,16 +213,19 @@ function updateCardContent(cap, cardElement) {
 }
 
 // Remove message/image/media from other capsules that are already unlocked
-function purgePreviousReleases(currentId) {
+// but only those that belong to the same partner key
+function purgePreviousReleases(currentId, partnerKey) {
     if (!db) return;
     const now = Date.now();
     const tx = db.transaction('capsules', 'readwrite');
     const store = tx.objectStore('capsules');
     const req = store.getAll();
+    const normKey = normalizePartnerKey(partnerKey || '');
     req.onsuccess = () => {
         const items = req.result || [];
         items.forEach(item => {
             if (!item || item.id === currentId) return;
+            if (normalizePartnerKey(item.partnerKey || '') !== normKey) return;
             if ((item.unlockAt || 0) <= now) {
                 // If already purged, skip
                 const needsPurge = (item.message && item.message.length) || item.image || item.media;
@@ -235,6 +259,9 @@ function schedulePurgeOnExit(id) {
 // Delete all capsules that are unlocked (unlockAt <= now) when the page unloads.
 function purgeUnlockedOnExit() {
     if (!db) return;
+    // Only purge unlocked capsules that belong to the active partner key
+    const rawActive = sessionStorage.getItem('activeUser');
+    const activePartnerKey = rawActive ? normalizePartnerKey(JSON.parse(rawActive).partnerKey || '') : '';
     const tx = db.transaction('capsules', 'readwrite');
     const store = tx.objectStore('capsules');
     const req = store.getAll();
@@ -243,7 +270,7 @@ function purgeUnlockedOnExit() {
         const now = Date.now();
         items.forEach(it => {
             if (!it) return;
-            if ((it.unlockAt || 0) <= now) {
+            if ((it.unlockAt || 0) <= now && normalizePartnerKey(it.partnerKey || '') === activePartnerKey) {
                 try { store.delete(it.id); } catch (e) { console.warn('delete failed', e); }
             }
         });
