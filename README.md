@@ -81,4 +81,7 @@ The deployed version is hosted on Vercel.
 ### Screenshots
 
 ![image](dashboard.png)
+![image](memory.png)
+![image](love.png)
+![image](call1.png)
 
