@@ -8,6 +8,22 @@ function normalizePartnerKey(value) {
     return value.trim().toUpperCase();
 }
 
+function countUsersWithKey(key) {
+    if (!key) return 0;
+    let count = 0;
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k || !k.startsWith('user_')) continue;
+        try {
+            const u = JSON.parse(localStorage.getItem(k));
+            if (u && normalizePartnerKey(u.partnerKey || '') === key) count++;
+        } catch {
+            // ignore malformed entries
+        }
+    }
+    return count;
+}
+
 function parseStoredUser(username) {
     try {
         return JSON.parse(localStorage.getItem(`user_${username}`));
@@ -61,6 +77,8 @@ authBtn.addEventListener('click', () => {
         }
     } else {
         if (!key) return alert("Partner key required!");
+        const existingCount = countUsersWithKey(key);
+        if (existingCount >= 2) return alert("This partner key already has two members. Choose a different key or ask your partner to invite you.");
         if (parseStoredUser(user)) return alert("Username already exists. Please sign in.");
         const userData = { username: user, password: pass, partnerKey: key };
         localStorage.setItem(`user_${user}`, JSON.stringify(userData));
